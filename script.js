@@ -106,18 +106,20 @@ getGDPData().then((data) => {
     .attr('cy', (d) => yScale(d.time))
     .attr('r', 5)
     .attr('class', 'dot')
-    .attr('fill', (d) => (d.doping === '' ? colors[0] : colors[1]));
-  // .on('mouseover', (e, d) => {
-  //   const i = e.target.getAttribute('index');
-  //   tooltip.transition().duration(200).style('opacity', 0.9);
+    .attr('fill', (d) => (d.doping === '' ? colors[0] : colors[1]))
+    .on('mouseover', (e, d) => {
+      const i = e.target.getAttribute('index');
+      tooltip.transition().duration(200).style('opacity', 0.9);
 
-  // tooltip
-  //   .html(`${d[0]}<br>$${d[1]}`)
-  //   .attr('data-date', d[0])
-  //   .style('left', `${xScale(new Date(data.data[i][0]))}px`)
-  //   .style('bottom', `${padding - 15}px`);
-  // })
-  // .on('mouseout', () => {
-  //   tooltip.transition().duration(200).style('opacity', 0);
-  // });
+      tooltip
+        .html(
+          `${d.name} <br> ${d.year} &mdash; ${d.nationality}<p>${d.doping}</p>`
+        )
+        .attr('data-year', d.year)
+        .style('left', `${e.clientX}px`)
+        .style('top', `${e.clientY}px`);
+    })
+    .on('mouseout', () => {
+      tooltip.transition().duration(200).style('opacity', 0);
+    });
 });
