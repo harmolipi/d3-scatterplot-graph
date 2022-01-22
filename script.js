@@ -6,6 +6,8 @@ const getGDPData = () => d3.json(url);
 const w = 800;
 const h = 500;
 const padding = 70;
+const colors = ['rgb(66, 128, 153)', 'rgb(216, 107, 107)'];
+
 const svg = d3
   .select('#chart-container')
   .append('svg')
@@ -18,14 +20,44 @@ let tooltip = d3
   .attr('id', 'tooltip')
   .style('opacity', 0);
 
+const legendContainer = svg.append('g').attr('id', 'legend');
+
+const legend = legendContainer
+  .selectAll('#legend')
+  .data(colors)
+  .enter()
+  .append('g')
+  .attr('class', 'legend-label')
+  .attr('transform', (d, i) => 'translate(0,' + (h / 2 - i * 20) + ')');
+
+legend
+  .append('rect')
+  .attr('x', w - 18)
+  .attr('width', 18)
+  .attr('height', 18)
+  .style('fill', (d, i) => colors[i]);
+
+legend
+  .append('text')
+  .attr('x', w - 24)
+  .attr('y', 9)
+  .attr('dy', '.35em')
+  .style('text-anchor', 'end')
+  .text((d) =>
+    d === 'rgb(66, 128, 153)' ? 'No doping allegations' : 'Doping allegations'
+  );
+
 getGDPData().then((data) => {
   console.log(data);
 
   const parseTime = d3.timeParse('%M:%S');
   const parsedData = data.map((d) => {
     return {
-      year: d.Year,
       time: parseTime(d.Time),
+      name: d.Name,
+      year: d.Year,
+      nationality: d.Nationality,
+      doping: d.Doping,
     };
   });
   console.log(parsedData);
@@ -37,8 +69,8 @@ getGDPData().then((data) => {
 
   const xScale = d3
     .scaleLinear()
-    .domain([yearMin, yearMax])
-    .range([padding, w - padding]);
+    .domain([yearMin - 1, yearMax + 1])
+    .range([padding, w - padding * 2]);
 
   const yScale = d3
     .scaleTime()
@@ -73,7 +105,8 @@ getGDPData().then((data) => {
     .attr('cx', (d, i) => xScale(d.year))
     .attr('cy', (d) => yScale(d.time))
     .attr('r', 5)
-    .attr('class', 'dot');
+    .attr('class', 'dot')
+    .attr('fill', (d) => (d.doping === '' ? colors[0] : colors[1]));
   // .on('mouseover', (e, d) => {
   //   const i = e.target.getAttribute('index');
   //   tooltip.transition().duration(200).style('opacity', 0.9);
