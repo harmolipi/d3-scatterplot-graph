@@ -1,7 +1,7 @@
 const url =
   'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json';
 
-const getGDPData = () => d3.json(url);
+const getCyclistData = () => d3.json(url);
 
 const w = 800;
 const h = 500;
@@ -47,7 +47,7 @@ legend
     d === 'rgb(66, 128, 153)' ? 'No doping allegations' : 'Doping allegations'
   );
 
-getGDPData().then((data) => {
+getCyclistData().then((data) => {
   console.log(data);
 
   const parseTime = d3.timeParse('%M:%S');
